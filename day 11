@@ -1,0 +1,33 @@
+You are given a sorted array consisting of only integers where every element appears exactly twice, except for one element which appears exactly once.
+
+Return the single element that appears only once.
+
+Your solution must run in O(log n) time and O(1) space.
+
+ class Solution {
+public:
+    int singleNonDuplicate(vector<int>& a)
+     {
+        if((a.size())==1) return a[0];
+        if(a[a.size()-1]!=a[a.size()-2]) return a[a.size()-1];
+        if(a[0]!=a[1])   return a[0];
+        int i,s=0,e=a.size();
+        while(s<=e)
+        {
+            int mid=s+(e-s)/2;
+            if(a[mid]!=a[mid-1]&&a[mid]!=a[mid+1])
+            return a[mid];
+
+            else if(
+                ((mid%2)==0&&a[mid]==a[mid+1])||
+            (mid&2==1&&a[mid]==a[mid-1])
+            )
+            s=mid+1;
+            else
+            e=mid-1;
+          
+        }
+             
+        return -1;
+    }
+};
