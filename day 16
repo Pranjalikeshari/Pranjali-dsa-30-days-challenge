@@ -1,0 +1,49 @@
+Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.
+
+The overall run time complexity should be O(log (m+n)).
+
+  class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& a, vector<int>& b) {
+       
+ if (a.size() > b.size()) {
+        return findMedianSortedArrays(b, a);
+    }
+
+    int m = a.size();
+    int n = b.size();
+    int low = 0, high = m;
+
+    while (low <= high) 
+    {
+        int partitionA = (low + high) / 2; // Partition index for array `a`
+        int partitionB = (m + n + 1) / 2 - partitionA; // Partition index for `
+
+        // Handle boundaries
+        int maxLeftA = (partitionA == 0) ? INT_MIN : a[partitionA - 1];
+        int minRightA = (partitionA == m) ? INT_MAX : a[partitionA];
+
+        int maxLeftB = (partitionB == 0) ? INT_MIN : b[partitionB - 1];
+        int minRightB = (partitionB == n) ? INT_MAX : b[partitionB];
+
+        // Check for correct partition
+        if (maxLeftA <= minRightB && maxLeftB <= minRightA) {
+            // Found the correct partition
+            if ((m + n) % 2 == 0) {
+                // If even, return the average of the two middle values
+                return (max(maxLeftA, maxLeftB) + min(minRightA, minRightB)) / 2.0;
+            } else {
+                // If odd, return the middle value
+                return max(maxLeftA, maxLeftB);
+            }
+        } else if (maxLeftA > minRightB) {
+            // Move left in array `a`
+            high = partitionA - 1;
+        } else {
+            // Move right in array `a`
+            low = partitionA + 1;
+        }
+    }
+throw invalid_argument("Input arrays are not sorted.");
+    }
+};
