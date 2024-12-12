@@ -1,0 +1,83 @@
+You are given an undirected graph consisting of v vertices and a list of edges, along with an integer m. Your task is to determine whether it is possible to color the graph using at most m different colors such that no two adjacent vertices share the same color. Return true if the graph can be colored with at most m colors, otherwise return false.
+
+Note: The graph is indexed with 0-based indexing.
+
+Examples:
+
+Input: v = 4, edges[] = [(0,1),(1,2),(2,3),(3,0),(0,2)], m = 3
+Output: true
+Explanation: It is possible to color the given graph using 3 colors, for example, one of the possible ways vertices can be colored as follows:
+Vertex 0: Color 3
+Vertex 1: Color 2
+Vertex 2: Color 1
+Vertex 3: Color 2
+Input: v = 3, edges[] = [(0,1),(1,2),(0,2)], m = 2
+Output: false
+Explanation: It is not possible to color the given graph using only 2 colors because vertices 0, 1, and 2 form a triangle.
+Expected Time Complexity: O(mV)
+Expected Auxiliary Space: O(v2)
+
+Constraints:
+1 ≤ v ≤ 20
+1 ≤ edges.size() ≤ (v*(v-1))/2
+0 ≤ edges[i][j] ≤ n-1
+1 ≤ m ≤ v
+
+
+
+ class Solution {
+public:
+    // Function to check if it's safe to color a vertex with a specific color
+    bool isSafe(int vertex, int color, vector<vector<int>> &graph, vector<int> &colors) {
+        for (int neighbor = 0; neighbor < graph.size(); neighbor++) {
+            if (graph[vertex][neighbor] == 1 && colors[neighbor] == color) {
+                return false; // Adjacent vertex has the same color
+            }
+        }
+        return true;
+    }
+
+    // Backtracking function to solve the m-coloring problem
+    bool graphColoringUtil(int vertex, int m, vector<vector<int>> &graph, vector<int> &colors) {
+        int v = graph.size(); // Number of vertices
+
+        // Base case: All vertices are colored
+        if (vertex == v) {
+            return true;
+        }
+
+        // Try all colors for the current vertex
+        for (int color = 1; color <= m; color++) {
+            if (isSafe(vertex, color, graph, colors)) {
+                colors[vertex] = color; // Assign color to the vertex
+
+                // Recur for the next vertex
+                if (graphColoringUtil(vertex + 1, m, graph, colors)) {
+                    return true;
+                }
+
+                // Backtrack
+                colors[vertex] = 0;
+            }
+        }
+        return false;
+    }
+
+    // Main function to check if the graph can be colored with at most m colors
+    bool graphColoring(int v, vector<pair<int, int>> &edges, int m) {
+        // Create an adjacency matrix
+        vector<vector<int>> graph(v, vector<int>(v, 0));
+        for (auto edge : edges) {
+            int u = edge.first;
+            int w = edge.second;
+            graph[u][w] = 1;
+            graph[w][u] = 1;
+        }
+
+        // Initialize colors array with 0 (no color assigned)
+        vector<int> colors(v, 0);
+
+        // Start backtracking from the first vertex
+        return graphColoringUtil(0, m, graph, colors);
+    }
+};
